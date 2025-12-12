@@ -65,37 +65,40 @@ def net_forces_fast(pos, mas, G=6.67428e-11):
 
 
 
-N=1000
-balls = []
-for _ in range(N):
-    # Losowa masa (1-100), losowa pozycja (-100 do 100), losowa prędkość
-    m = (np.random.rand() * 100 + 1)*10**11
-    r = 1.0
-    pos = np.random.rand(3) * 200 - 100
-    vel = np.random.rand(3) * 10 - 5
-    balls.append(Ball(m, r, pos, vel))
 
 
 
-import time
-start_time = time.time()
-forces_old = net_forces(balls)
-end_time = time.time()
-time_old = end_time - start_time
-
-start_prep = time.time()
-pos_array = np.array([b.getPos() for b in balls])
-mass_array = np.array([b.getMass() for b in balls])
-prep_time = time.time() - start_prep
-
-start_time = time.time()
-forces_new = net_forces_fast(pos_array, mass_array)
-end_time = time.time()
-time_new = end_time - start_time
-
-print("Iterational:",time_old)
-print("Prep:",prep_time)
-print("Matrix:",time_new)
+def speedtest():
+    N=1000
+    balls = []
+    for _ in range(N):
+        m = (np.random.rand() * 100 + 1)*10**11
+        r = 1.0
+        pos = np.random.rand(3) * 200 - 100
+        vel = np.random.rand(3) * 10 - 5
+        balls.append(Ball(m, r, pos, vel))
 
 
 
+    import time
+    start_time = time.time()
+    forces_old = net_forces(balls)
+    end_time = time.time()
+    time_old = end_time - start_time
+
+    start_prep = time.time()
+    pos_array = np.array([b.getPos() for b in balls])
+    mass_array = np.array([b.getMass() for b in balls])
+    prep_time = time.time() - start_prep
+
+    start_time = time.time()
+    forces_new = net_forces_fast(pos_array, mass_array)
+    end_time = time.time()
+    time_new = end_time - start_time
+
+    print("Iterational:",time_old)
+    print("Prep:",prep_time)
+    print("Matrix:",time_new)
+
+
+speedtest();
