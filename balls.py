@@ -65,7 +65,19 @@ def net_forces_fast(pos, mas, G=6.67428e-11):
 
 
 
+def dynamics(balls: list[Ball],dt):
+    pos = np.array([b.getPos() for b in balls])
+    vel = np.array([b.getVel() for b in balls])
+    mas = np.array([b.getMass() for b in balls])
 
+    a = net_forces_fast(pos,mas)/mas[:,None]
+
+    new_vel = vel + a*dt
+    new_pos = pos + vel*dt + 0.5*a*(dt**2)
+
+    for i, ball in enumerate(balls):
+        ball.setVel(new_vel[i])
+        ball.setPos(new_pos[i])
 
 
 def speedtest():
@@ -99,6 +111,26 @@ def speedtest():
     print("Iterational:",time_old)
     print("Prep:",prep_time)
     print("Matrix:",time_new)
+ 
+
+def pos_test():
+    N=10
+    balls = []
+    for _ in range(N):
+        m = (np.random.rand() * 100 + 1)*10**11
+        r = 1.0
+        pos = np.random.rand(3) * 200 - 100
+        vel = np.random.rand(3) * 10 - 5
+        balls.append(Ball(m, r, pos, vel))
+
+    for ball in balls:
+        print(ball.getPos())
+
+    dynamics(balls,0.1)
+    print("="*42)
+    for ball in balls:
+        print(ball.getPos())
 
 
-speedtest();
+#speedtest()
+pos_test()
