@@ -18,6 +18,9 @@ class Ball(object):
     def getMass(self):
         return self.m
     
+    def getRad(self):
+        return self.r
+
     #setters
     def setVel(self,velo):
         self.vel=np.array(velo, dtype=float)

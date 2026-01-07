@@ -1,40 +1,70 @@
-import balls
-
-def impData(filename):
-    objects=[]
-    try:
-        with open(filename,'r') as data:
-            for line in data:
-                x=line.split(';')
-                objects.append(balls.Ball(float(x[0]), float(x[1]), [float(x[2]),float(x[3]),float(x[4])], [float(x[5]),float(x[6]),float(x[7])]))
-    except FileNotFoundError:
-        print("File not found")
-    return objects
-
-
-def expData(filename,objects):
-        with open(filename,'w') as data:
-            for line in objects:
-                data.write(str(line.getMass())+
-                           ";"+str(line.getRad())+
-                           ";"+str(line.getPos()[0])+
-                           ";"+str(line.getPos()[1])+
-                           ";"+str(line.getPos()[2])+
-                           ";"+str(line.getVel()[0])+
-                           ";"+str(line.getVel()[1])+
-                           ";"+str(line.getVel()[2])+
-                           "\n")
-
 import numpy as np
-blist=[]
-for _ in range(100):
-        m = (np.random.rand() * 100 + 1)*10**11
-        r = 1.0
-        pos = np.random.rand(3) * 200 - 100
-        vel = np.random.rand(3) * 10 - 5
-        blist.append(balls.Ball(m, r, pos, vel))
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from mpl_toolkits.mplot3d import Axes3D
 
-expData("interstellarballs.csv",blist)
+from balls import dynamics
+from files import impData, expData
 
-a=impData("interstellarballs.csv")
-print(a[0].getPos(),4*a[1].getMass())
+def generate_sphere_coords(center, radius, resolution=8):
+    u = np.linspace(0, 2 * np.pi, resolution)
+    v = np.linspace(0, np.pi, resolution)    
+    x = radius * np.outer(np.cos(u), np.sin(v)) + center[0]
+    y = radius * np.outer(np.sin(u), np.sin(v)) + center[1]
+    z = radius * np.outer(np.ones(np.size(u)), np.cos(v)) + center[2]
+    return x, y, z
+
+def run_simulation(balls_list, dt, limit=666):
+    
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111, projection='3d')
+    
+    ax.set_xlim([-limit, limit])
+    ax.set_ylim([-limit, limit])
+    ax.set_zlim([-limit, limit])
+    ax.set_title("M.A.S.S.")
+
+    plots_cache = []
+
+    def physics_generator():
+        while True:
+            dynamics(balls_list, dt)
+            
+            data_packet = []
+            for ball in balls_list:
+                data_packet.append((ball.getPos(), ball.r))
+            
+            yield data_packet
+
+    def draw_frame(data, cache_list):
+        for p in cache_list:
+            p.remove()
+        cache_list.clear()
+        
+        for position, radius in data:
+            x, y, z = generate_sphere_coords(position, radius, resolution=8)
+            surf = ax.plot_surface(x, y, z, color='blue', alpha=0.9, shade=True)
+            cache_list.append(surf)
+            
+        return cache_list
+
+    ani = animation.FuncAnimation(
+        fig, 
+        draw_frame,              
+        frames=physics_generator, 
+        fargs=(plots_cache,),
+        interval=10, 
+        blit=False,
+        save_count=50            
+    )
+
+    plt.show()
+
+if __name__ == "__main__":
+    import sys
+    filename=sys.argv[1]
+    print(filename)
+    objects=impData(filename)
+
+    run_simulation(objects, dt=0.05)
+    pass
