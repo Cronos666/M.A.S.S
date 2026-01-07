@@ -73,7 +73,7 @@ def dynamics(balls: list[Ball],dt):
     a = net_forces_fast(pos,mas)/mas[:,None]
 
     new_vel = vel + a*dt
-    new_pos = pos + vel*dt + 0.5*a*(dt**2)
+    new_pos = pos + vel*dt
 
     for i, ball in enumerate(balls):
         ball.setVel(new_vel[i])
