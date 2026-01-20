@@ -2,9 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.widgets import Button
+import time
 
 from balls import dynamics
 from files import impData, expData
+
 
 def generate_sphere_coords(center, radius, resolution=8):
     u = np.linspace(0, 2 * np.pi, resolution)
@@ -24,7 +27,14 @@ def run_simulation(balls_list, dt, limit=666):
     ax.set_zlim([-limit, limit])
     ax.set_title("M.A.S.S.")
 
+    axb = plt.axes([0.8,0.03,0.1,0.04])
+    save = Button(axb, "save data")
+    save.on_clicked(lambda event: expData("export "+time.ctime()+".csv",balls_list))
+    
+
     plots_cache = []
+
+    
 
     def physics_generator():
         while True:
@@ -62,9 +72,12 @@ def run_simulation(balls_list, dt, limit=666):
 
 if __name__ == "__main__":
     import sys
-    filename=sys.argv[1]
-    print(filename)
-    objects=impData(filename)
+    if len(sys.argv)<2:
+        print("Not enough arguments")
+    else:
+        filename=sys.argv[1]
+        print(filename)
+        objects=impData(filename)
 
-    run_simulation(objects, dt=0.05)
-    pass
+        run_simulation(objects, dt=0.05)
+        pass
