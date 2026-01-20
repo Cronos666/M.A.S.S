@@ -27,11 +27,19 @@ def run_simulation(balls_list, dt, limit=666):
     ax.set_zlim([-limit, limit])
     ax.set_title("M.A.S.S.")
 
-    axb = plt.axes([0.8,0.03,0.1,0.04])
-    save = Button(axb, "save data")
-    save.on_clicked(lambda event: expData("export "+time.ctime()+".csv",balls_list))
+    #axb = plt.axes([0.8,0.03,0.1,0.04])
+    #save = Button(axb, "save data")
+    #save.on_clicked(lambda event: expData("export "+time.ctime()+".csv",balls_list))
+    
+    #data show
+    info_text = fig.text(0.02, 0.95, "Press 'n' to select object...", 
+                         fontsize=10, color='white', 
+                         bbox=dict(facecolor='black', alpha=0.7, edgecolor='gray'),
+                         verticalalignment='top', fontfamily='monospace')
+
     
 
+    selection_state = {'index': None}
     plots_cache = []
 
     
@@ -46,16 +54,54 @@ def run_simulation(balls_list, dt, limit=666):
             
             yield data_packet
 
+    def on_key(event):
+        if event.key == 'n':
+            N = len(balls_list)
+            if N == 0: return
+            
+            if selection_state['index'] is None:
+                selection_state['index'] = 0
+            else:
+                selection_state['index'] = (selection_state['index'] +1) % N
+
+        if event.key == 'e':
+           expData("export "+time.ctime()+".csv",balls_list)
+
+    fig.canvas.mpl_connect('key_press_event',on_key)
+
     def draw_frame(data, cache_list):
         for p in cache_list:
             p.remove()
         cache_list.clear()
         
-        for position, radius in data:
+        for i, (position, radius) in enumerate(data):
             x, y, z = generate_sphere_coords(position, radius, resolution=8)
-            surf = ax.plot_surface(x, y, z, color='blue', alpha=0.9, shade=True)
+
+            selected  = (i == selection_state['index'])
+            color = 'red' if selected else 'purple'
+            alpha = 1.0 if selected else 0.8
+
+            surf = ax.plot_surface(x, y, z, color=color, alpha=alpha, shade=True)
             cache_list.append(surf)
-            
+       
+
+        if selection_state['index'] is None:
+            info_text.set_text("Press 'n' to select object")
+            info_text.set_color('white')
+        else:
+            id = selection_state['index']
+            if  id < len(balls_list):
+                b = balls_list[id]
+                pos = b.getPos()
+                vel = np.linalg.norm(b.getVel())
+            txt = (f"Object no. {id+1}\n"
+                   f"Mass:      {b.getMass():.2e}\n"
+                   f"Radius:    {b.getRad()}\n"
+                   f"Position:  [{pos[0]:.1f},{pos[1]:.1f},{pos[2]:.1f}]\n"
+                   f"Velocity:  {vel:.2f}")
+            info_text.set_text(txt)
+            info_text.set_color('yellow')
+
         return cache_list
 
     ani = animation.FuncAnimation(
