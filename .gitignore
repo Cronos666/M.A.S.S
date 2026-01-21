@@ -1,3 +1,4 @@
+.gitignore
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
@@ -325,3 +326,4 @@ TSWLatexianTemp*
 # Uncomment the next line to have this generated file ignored.
 #*Notes.bib
 __pycache__
+realeases
