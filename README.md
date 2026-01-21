@@ -31,4 +31,4 @@ Physics engine lies in `balls.py` and use simple vector math for optimalization 
  * $\vec{a} = \vec{F_{net}}/m$
  * $\vec{v} = \vec{v_{0}} + \vec{a} dt$
  * $\vec{r} = \vec{r_{0}} + \vec{v} dt$
- * $ \vec{F_{net}} = \sum -G \frac{m_{j}   m_{i}}{|r_{ij}|^{3}} \vec{r_{ij}}$
+ * $\vec{F_{net}} = \sum -G \frac{m_{j}   m_{i}}{|r_{ij}|^{3}} \vec{r_{ij}}$
