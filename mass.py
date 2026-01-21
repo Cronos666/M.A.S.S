@@ -171,14 +171,3 @@ def randBall(N):
 if __name__ == "__main__":
     main()
     #randBall(42)
-
-    #if len(sys.argv)<2:
-    #    print("Not enough arguments")
-    #else:
-    #    filename=sys.argv[1]
-
-    #
-    #   objects=impData(filename)
-
-    #   run_simulation(objects, dt=0.05)
-    #   pass
