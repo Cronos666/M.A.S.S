@@ -72,12 +72,14 @@ def run_simulation(balls_list, dt, trails=False, limit=666):
     fig.canvas.mpl_connect('key_press_event',on_key)
 
     def draw_frame(data, cache_list):
-        if not trails:
-            for p in cache_list:
-                p.remove()
-            cache_list.clear()
+        for p in cache_list:
+            p.remove()
+        cache_list.clear()
         
         for i, (position, radius) in enumerate(data):
+            if trails:
+                ax.scatter(position[0], position[1], position[2], s=1, c="blue")
+
             x, y, z = generate_sphere_coords(position, radius, resolution=8)
 
             selected  = (i == selection_state['index'])
