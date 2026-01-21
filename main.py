@@ -4,6 +4,8 @@ import matplotlib.animation as animation
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.widgets import Button
 import time
+import sys
+import argparse
 
 from balls import dynamics
 from files import impData, expData
@@ -116,14 +118,39 @@ def run_simulation(balls_list, dt, limit=666):
 
     plt.show()
 
-if __name__ == "__main__":
-    import sys
-    if len(sys.argv)<2:
-        print("Not enough arguments")
-    else:
-        filename=sys.argv[1]
-        print(filename)
-        objects=impData(filename)
+def main():
+    
+    info = ("MACRO:\n"
+            "============================\n"
+            "   n   focus on next object\n"
+            "   e   save current state\n"
+            "============================\n"
+            "Authors: Kacper Śmieżewski, Stanisław Pokora\n")
 
-        run_simulation(objects, dt=0.05)
-        pass
+    parser = argparse.ArgumentParser(description="Modeling and Analysing of Spacetime Simulation", epilog=info, formatter_class=argparse.RawDescriptionHelpFormatter)
+
+    parser.add_argument('-f', '--file', type=str, required=True, help='csv file path')
+
+    parser.add_argument('-dt', '--dtime', type=float, default=0.1, help='timestep length')
+
+
+    
+    args = parser.parse_args()
+
+    objects=impData(args.file)
+    run_simulation(objects, args.dtime)
+
+    
+
+if __name__ == "__main__":
+    main()
+    #if len(sys.argv)<2:
+    #    print("Not enough arguments")
+    #else:
+    #    filename=sys.argv[1]
+
+    #
+    #   objects=impData(filename)
+
+    #   run_simulation(objects, dt=0.05)
+    #   pass
