@@ -125,6 +125,16 @@ def main():
             "   n   focus on next object\n"
             "   e   save current state\n"
             "============================\n"
+            "\n\n"
+            "FILE STRUCTURE: \n"
+            "==============\n"
+            " mass, radius, x position, y position, z position, x velocity, y velocity, z velocity\n"
+            "--------------------------------------------------------------------------------------\n"
+            " 2e10,     30,        1.1,        2.2,        3.3,        4.4,        5.5,     6.6    \n"
+            "  100,      2,         10,          9,          8,          7,          6,       5    \n"
+            "======================================================================================\n"
+            "File should contain only values!\n\n"
+
             "Authors: Kacper Śmieżewski, Stanisław Pokora\n")
 
     parser = argparse.ArgumentParser(description="Modeling and Analysing of Spacetime Simulation", epilog=info, formatter_class=argparse.RawDescriptionHelpFormatter)

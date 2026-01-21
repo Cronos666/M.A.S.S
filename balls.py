@@ -31,7 +31,7 @@ class Ball(object):
 
 
 #matrix forces calculation
-def net_forces_fast(pos, mas, G=6.67428e-11):
+def net_forces(pos, mas, G=6.67428e-11):
 #macierz  =pionowy wektor - poziomy wektor 
     d_pos = pos[:,None,:] - pos[None,:,:]
     mM = mas[:,None] * mas[None,:]
@@ -52,7 +52,7 @@ def dynamics(balls: list[Ball],dt):
     vel = np.array([b.getVel() for b in balls])
     mas = np.array([b.getMass() for b in balls])
 
-    a = net_forces_fast(pos,mas)/mas[:,None]
+    a = net_forces(pos,mas)/mas[:,None]
 
     new_vel = vel + a*dt
     new_pos = pos + vel*dt
