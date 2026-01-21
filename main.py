@@ -7,7 +7,7 @@ import time
 import sys
 import argparse
 
-from balls import dynamics
+from balls import dynamics, Ball
 from files import impData, expData
 
 
@@ -19,7 +19,7 @@ def generate_sphere_coords(center, radius, resolution=8):
     z = radius * np.outer(np.ones(np.size(u)), np.cos(v)) + center[2]
     return x, y, z
 
-def run_simulation(balls_list, dt, limit=666):
+def run_simulation(balls_list, dt, trails=False, limit=666):
     
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111, projection='3d')
@@ -72,9 +72,10 @@ def run_simulation(balls_list, dt, limit=666):
     fig.canvas.mpl_connect('key_press_event',on_key)
 
     def draw_frame(data, cache_list):
-        for p in cache_list:
-            p.remove()
-        cache_list.clear()
+        if not trails:
+            for p in cache_list:
+                p.remove()
+            cache_list.clear()
         
         for i, (position, radius) in enumerate(data):
             x, y, z = generate_sphere_coords(position, radius, resolution=8)
@@ -143,17 +144,32 @@ def main():
 
     parser.add_argument('-dt', '--dtime', type=float, default=0.1, help='timestep length')
 
+    parser.add_argument('-t', '--trail', action="store_true", help="enable trails (not recomended for slow computers)")
 
-    
+    parser.add_argument('-l', '--limit', type=int, default=666, help="box limits")
+
     args = parser.parse_args()
 
     objects=impData(args.file)
-    run_simulation(objects, args.dtime)
+    run_simulation(objects, args.dtime, args.trail, args.limit) 
 
     
+def randBall(N):
+    balls = []
+    for _ in range(N):
+        m = (np.random.rand() * 100 + 1)*10**11
+        r = 1.0
+        pos = np.random.rand(3) * 200 - 100
+        vel = np.random.rand(3) * 10 - 5
+        balls.append(Ball(m, r, pos, vel))
+
+    expData("interstellarballs.csv", balls)    
+
 
 if __name__ == "__main__":
     main()
+    #randBall(42)
+
     #if len(sys.argv)<2:
     #    print("Not enough arguments")
     #else:
